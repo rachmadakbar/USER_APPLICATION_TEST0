@@ -44,12 +44,11 @@
 //{
 	//gpio_toggle_pin(NHD_C12832A1Z_BACKLIGHT);
 //}
-int count = 0;
-uint16_t sun_value = 0;
-uint8_t zombie_position = 122;
-//uint8_t plant_location = 0;
-uint8_t bullet_position = 8;
+//int count = 0;
 
+//uint8_t plant_location = 0;
+
+/*
 static void leds_toggle()
 {
 	LED_Toggle(LED2);
@@ -75,7 +74,8 @@ static void change_text()
 	}
 	count = (count + 1) % 2;
 }
-
+*/
+uint16_t sun_value = 0;
 static void sun_count()
 {
 	sun_value++;
@@ -86,18 +86,56 @@ static void sun_count()
 	gfx_mono_draw_string(sun_val_string, 25, 0, &sysfont);
 }
 
+uint8_t zombie_position = 122; //in x
 static void zombie_walk()
 {
+	//if(gpio_pin_is_low(GPIO_PUSH_BUTTON_0)){
 	gfx_mono_draw_filled_rect(zombie_position+5, 8, 1, 8, GFX_PIXEL_CLR);
 	zombie_position--;
 	gfx_mono_draw_string("@", zombie_position, 8, &sysfont);
+	//}
 }
 
+uint8_t bullet_position = 13; //in x
 static void bullet_seed()
 {
-	gfx_mono_draw_filled_rect(bullet_position-1, 24, 1, 8, GFX_PIXEL_CLR);
+	gfx_mono_draw_filled_rect(bullet_position, 24, 1, 8, GFX_PIXEL_CLR);
 	bullet_position++;
 	gfx_mono_draw_string("*", bullet_position, 24, &sysfont);
+}
+
+uint8_t cursor_position = 8; //in y
+static void cursor_select()
+{
+	bool up_pressed = gpio_pin_is_low(GPIO_PUSH_BUTTON_1);
+	bool down_pressed = gpio_pin_is_low(GPIO_PUSH_BUTTON_2);
+	
+	if(up_pressed){
+		
+		gfx_mono_draw_filled_rect(0, cursor_position, 6, 8, GFX_PIXEL_CLR);
+		
+		if(cursor_position == 8){
+			cursor_position = 24;
+		}
+		else{
+			cursor_position -= 8;
+		}
+
+		gfx_mono_draw_string(">", 0, cursor_position, &sysfont);
+	}
+
+	if(down_pressed){
+		gfx_mono_draw_filled_rect(0, cursor_position, 6, 8, GFX_PIXEL_CLR);
+		
+		if(cursor_position == 24){
+			cursor_position = 8;
+		}
+		else{
+			cursor_position += 8;
+		}
+
+		gfx_mono_draw_string(">", 0, cursor_position, &sysfont);
+	}
 }
 
 int main (void)
@@ -118,10 +156,11 @@ int main (void)
 	
 	gfx_mono_init();
 	gfx_mono_draw_string("SUN:   0", 0, 0, &sysfont);
+	gfx_mono_draw_string(">", 0, cursor_position, &sysfont);
 	//gfx_mono_draw_string(sun_val_string, 25, 0, &sysfont);
 	//gfx_mono_draw_string("123456789012345678901", 0, 8, &sysfont);
 	// Insert application code here, after the board has been initialized.
-	bool is_pressed, is_touched;//, is_light;
+	//bool is_pressed, is_touched;//, is_light;
 	
 	gpio_set_pin_high(NHD_C12832A1Z_BACKLIGHT);
 	/*PraktikumX3*/
@@ -141,11 +180,11 @@ int main (void)
 	//gfx_mono_draw_string("@", 118, 24, &sysfont);
 	
 	tc_enable(&TCC1);
-	tc_set_overflow_interrupt_callback(&TCC1, zombie_walk);
+	tc_set_overflow_interrupt_callback(&TCC1, cursor_select);
 	tc_set_wgm(&TCC1, TC_WG_NORMAL);
-	tc_write_period(&TCC1, 15625);
+	tc_write_period(&TCC1, 50000);
 	tc_set_overflow_interrupt_level(&TCC1, TC_INT_LVL_LO);
-	tc_write_clock_source(&TCC1, TC_CLKSEL_DIV64_gc);
+	tc_write_clock_source(&TCC1, TC_CLKSEL_DIV8_gc);
 	
 	tc_enable(&TCE0);
 	tc_set_overflow_interrupt_callback(&TCE0, bullet_seed);
@@ -153,6 +192,13 @@ int main (void)
 	tc_write_period(&TCE0, 15625);
 	tc_set_overflow_interrupt_level(&TCE0, TC_INT_LVL_LO);
 	tc_write_clock_source(&TCE0, TC_CLKSEL_DIV64_gc);
+	
+	tc_enable(&TCE1);
+	tc_set_overflow_interrupt_callback(&TCE1, zombie_walk);
+	tc_set_wgm(&TCE1, TC_WG_NORMAL);
+	tc_write_period(&TCE1, 15625);
+	tc_set_overflow_interrupt_level(&TCE1, TC_INT_LVL_LO);
+	tc_write_clock_source(&TCE1, TC_CLKSEL_DIV64_gc);
 	
 	while(1){
 		////LED_Off(LED1);
@@ -169,8 +215,8 @@ int main (void)
 		//_delay_ms(700);
 		//LED_Off(LED3);
 		//_delay_ms(700);
-		is_pressed = gpio_pin_is_low(GPIO_PUSH_BUTTON_1);	
-		is_touched = gpio_pin_is_high(QTOUCH_BUTTON_SNSK);//check_touch_key_pressed();
+		//is_pressed = gpio_pin_is_low(GPIO_PUSH_BUTTON_1);	
+		//is_touched = gpio_pin_is_high(QTOUCH_BUTTON_SNSK);//check_touch_key_pressed();
 		//is_light = gpio_pin_is_high(LIGHT_SENSOR_SIGNAL_PIN);
 		//gpio_toggle_pin
 		//check_touch_key_pressed();
@@ -181,14 +227,14 @@ int main (void)
 		gfx_mono_draw_string("SUN:", 0, 0, &sysfont);
 		gfx_mono_draw_string(sun_val_string, 21, 0, &sysfont);
 		*/
-		if(is_pressed){
+		/*if(is_pressed){
 			LED_Toggle(LED0);
 			_delay_ms(200);
 		}
 		if(is_touched){
 			gpio_toggle_pin(NHD_C12832A1Z_BACKLIGHT);
 			_delay_ms(200);			
-		}
+		}*/
 		/*if(is_light){
 			LED_Toggle(LED1);
 			_delay_ms(200);
