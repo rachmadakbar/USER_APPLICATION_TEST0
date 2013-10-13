@@ -11,15 +11,20 @@
       <framework-data>
   <options>
     <option id="common.boards" value="Add" config="" content-id="Atmel.ASF" />
-    <option id="common.services.basic.gpio" value="Add" config="" content-id="Atmel.ASF" />
-    <option id="xmega.drivers.ioport" value="Add" config="" content-id="Atmel.ASF" />
-    <option id="xmega.drivers.tc" value="Add" config="" content-id="Atmel.ASF" />
     <option id="common.services.gfx_mono.font" value="Add" config="" content-id="Atmel.ASF" />
+    <option id="common.services.basic.gpio" value="Add" config="" content-id="Atmel.ASF" />
+    <option id="xmega.drivers.adc" value="Add" config="" content-id="Atmel.ASF" />
+    <option id="xmega.drivers.ioport" value="Add" config="" content-id="Atmel.ASF" />
+    <option id="xmega.drivers.rtc32" value="Add" config="" content-id="Atmel.ASF" />
+    <option id="xmega.drivers.tc" value="Add" config="" content-id="Atmel.ASF" />
+    <option id="common.utils.interrupt" value="Add" config="" content-id="Atmel.ASF" />
+    <option id="xmega.drivers.pmic" value="Add" config="" content-id="Atmel.ASF" />
     <option id="common.applications.user_application" value="Add" config="" content-id="Atmel.ASF" />
   </options>
   <configurations>
     <configuration key="config.spi_master_type" value="usart_and_standard_spi" default="usart_and_standard_spi" content-id="Atmel.ASF" />
     <configuration key="config.gfx_mono.display" value="c12832_a1z" default="c12832_a1z" content-id="Atmel.ASF" />
+    <configuration key="config.xmega.drivers.twi.mode" value="both" default="both" content-id="Atmel.ASF" />
   </configurations>
   <files>
     <file path="src/config/conf_board.h" framework="" version="" source="common/applications/user_application/atxmega256a3bu_xmega_a3bu_xplained/config/conf_board.h" changed="False" content-id="Atmel.ASF" />
@@ -104,6 +109,13 @@
     <file path="src/Config/conf_usart_spi.h" framework="" version="3.11.0" source="common\services\spi\xmega_usart_spi\module_config\conf_usart_spi.h" changed="False" content-id="Atmel.ASF" />
     <file path="src/ASF/xmega/drivers/usart/usart.c" framework="" version="3.11.0" source="xmega\drivers\usart\usart.c" changed="False" content-id="Atmel.ASF" />
     <file path="src/ASF/xmega/drivers/usart/usart.h" framework="" version="3.11.0" source="xmega\drivers\usart\usart.h" changed="False" content-id="Atmel.ASF" />
+    <file path="src/ASF/xmega/drivers/adc/xmega_aau/adc_aau.c" framework="" version="3.11.0" source="xmega\drivers\adc\xmega_aau\adc_aau.c" changed="False" content-id="Atmel.ASF" />
+    <file path="src/ASF/xmega/drivers/adc/adc.c" framework="" version="3.11.0" source="xmega\drivers\adc\adc.c" changed="False" content-id="Atmel.ASF" />
+    <file path="src/ASF/xmega/drivers/adc/adc.h" framework="" version="3.11.0" source="xmega\drivers\adc\adc.h" changed="False" content-id="Atmel.ASF" />
+    <file path="src/Config/conf_adc.h" framework="" version="3.11.0" source="xmega\drivers\adc\module_config\conf_adc.h" changed="False" content-id="Atmel.ASF" />
+    <file path="src/ASF/xmega/drivers/rtc32/rtc32.c" framework="" version="3.11.0" source="xmega\drivers\rtc32\rtc32.c" changed="False" content-id="Atmel.ASF" />
+    <file path="src/ASF/xmega/drivers/rtc32/rtc32.h" framework="" version="3.11.0" source="xmega\drivers\rtc32\rtc32.h" changed="False" content-id="Atmel.ASF" />
+    <file path="src/Config/conf_rtc32.h" framework="" version="3.11.0" source="xmega\drivers\rtc32\module_config\conf_rtc32.h" changed="False" content-id="Atmel.ASF" />
   </files>
   <documentation help="http://asf.atmel.com/docs/3.11.0/common.applications.user_application.xmega_a3bu_xplained/html/index.html" />
   <offline-documentation help="" />
@@ -190,6 +202,8 @@
       <Value>../src/ASF/common/services/spi/xmega_spi</Value>
       <Value>../src/ASF/common/services/spi</Value>
       <Value>../src/ASF/xmega/drivers/usart</Value>
+      <Value>../src/ASF/xmega/drivers/adc</Value>
+      <Value>../src/ASF/xmega/drivers/rtc32</Value>
     </ListValues>
   </avrgcc.compiler.directories.IncludePaths>
   <avrgcc.compiler.optimization.level>Optimize for size (-Os)</avrgcc.compiler.optimization.level>
@@ -224,6 +238,8 @@
       <Value>../src/ASF/common/services/spi/xmega_spi</Value>
       <Value>../src/ASF/common/services/spi</Value>
       <Value>../src/ASF/xmega/drivers/usart</Value>
+      <Value>../src/ASF/xmega/drivers/adc</Value>
+      <Value>../src/ASF/xmega/drivers/rtc32</Value>
     </ListValues>
   </avrgcc.assembler.general.IncludePaths>
 </AvrGcc>
@@ -275,6 +291,8 @@
       <Value>../src/ASF/common/services/spi/xmega_spi</Value>
       <Value>../src/ASF/common/services/spi</Value>
       <Value>../src/ASF/xmega/drivers/usart</Value>
+      <Value>../src/ASF/xmega/drivers/adc</Value>
+      <Value>../src/ASF/xmega/drivers/rtc32</Value>
     </ListValues>
   </avrgcc.compiler.directories.IncludePaths>
   <avrgcc.compiler.optimization.level>Optimize (-O1)</avrgcc.compiler.optimization.level>
@@ -310,6 +328,8 @@
       <Value>../src/ASF/common/services/spi/xmega_spi</Value>
       <Value>../src/ASF/common/services/spi</Value>
       <Value>../src/ASF/xmega/drivers/usart</Value>
+      <Value>../src/ASF/xmega/drivers/adc</Value>
+      <Value>../src/ASF/xmega/drivers/rtc32</Value>
     </ListValues>
   </avrgcc.assembler.general.IncludePaths>
   <avrgcc.assembler.debugging.DebugLevel>Default (-Wa,-g)</avrgcc.assembler.debugging.DebugLevel>
@@ -433,6 +453,15 @@
     <None Include="src\ASF\common\services\spi\xmega_usart_spi\usart_spi.h">
       <SubType>compile</SubType>
     </None>
+    <Compile Include="src\ASF\xmega\drivers\adc\adc.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <None Include="src\ASF\xmega\drivers\adc\adc.h">
+      <SubType>compile</SubType>
+    </None>
+    <Compile Include="src\ASF\xmega\drivers\adc\xmega_aau\adc_aau.c">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="src\ASF\xmega\drivers\cpu\ccp.s">
       <SubType>compile</SubType>
     </Compile>
@@ -455,6 +484,12 @@
       <SubType>compile</SubType>
     </None>
     <None Include="src\ASF\xmega\drivers\sleep\sleep.h">
+      <SubType>compile</SubType>
+    </None>
+    <Compile Include="src\ASF\xmega\drivers\rtc32\rtc32.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <None Include="src\ASF\xmega\drivers\rtc32\rtc32.h">
       <SubType>compile</SubType>
     </None>
     <Compile Include="src\ASF\xmega\drivers\spi\spi.c">
@@ -488,6 +523,12 @@
       <SubType>compile</SubType>
     </Compile>
     <None Include="src\ASF\xmega\drivers\usart\usart.h">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="src\config\conf_adc.h">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="src\config\conf_rtc32.h">
       <SubType>compile</SubType>
     </None>
     <Compile Include="src\main.c">
@@ -604,9 +645,12 @@
     <Folder Include="src\ASF\xmega\boards\" />
     <Folder Include="src\ASF\xmega\boards\xmega_a3bu_xplained\" />
     <Folder Include="src\ASF\xmega\drivers\" />
+    <Folder Include="src\ASF\xmega\drivers\adc\" />
+    <Folder Include="src\ASF\xmega\drivers\adc\xmega_aau\" />
     <Folder Include="src\ASF\xmega\drivers\cpu\" />
     <Folder Include="src\ASF\xmega\drivers\nvm\" />
     <Folder Include="src\ASF\xmega\drivers\pmic\" />
+    <Folder Include="src\ASF\xmega\drivers\rtc32\" />
     <Folder Include="src\ASF\xmega\drivers\sleep\" />
     <Folder Include="src\ASF\xmega\drivers\spi\" />
     <Folder Include="src\ASF\xmega\drivers\tc\" />

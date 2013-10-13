@@ -52,6 +52,9 @@
  * running the ASF driver selector tool. Any changes will be discarded.
  */
 
+// From module: ADC - XMEGA A/AU Implementation
+#include <adc.h>
+
 // From module: CPU specific features
 #include <ccp.h>
 #include <xmega_reset_cause.h>
@@ -85,6 +88,9 @@
 
 // From module: Part identification macros
 #include <parts.h>
+
+// From module: RTC32 - Real Time Counter 32
+#include <rtc32.h>
 
 // From module: SPI - Serial Peripheral Interface
 #include <spi.h>
