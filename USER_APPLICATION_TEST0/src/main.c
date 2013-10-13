@@ -136,6 +136,18 @@ static void cursor_select()
 
 		gfx_mono_draw_string(">", 0, cursor_position, &sysfont);
 	}
+	
+	bool planting = gpio_pin_is_low(GPIO_PUSH_BUTTON_0);
+
+	bool check_plant[] = {false, false, false};
+	uint8_t plant_index = cursor_position / 8 - 1;
+
+	if(planting && sun_value >= 10 && !check_plant[plant_index]){
+		gfx_mono_draw_string("P", 6, cursor_position, &sysfont);
+		sun_value -= 10;
+		check_plant[plant_index] = true;
+	}
+
 }
 
 int main (void)
