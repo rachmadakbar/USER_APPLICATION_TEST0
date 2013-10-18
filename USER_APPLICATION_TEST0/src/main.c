@@ -62,6 +62,7 @@ static void led_start()
 	}
 }
 
+//bool start_state = true;
 
 static void start_game()
 {
@@ -88,6 +89,7 @@ static void start_game()
 	
 	gfx_mono_draw_filled_rect(0, 0, 128, 32, GFX_PIXEL_CLR);
 	
+	//start_state = false;
 }
 
 uint16_t sun_value = 0;
@@ -98,6 +100,7 @@ static void sun_count()
 	
 	char* sun_val_string = NULL;
 	sprintf(sun_val_string, "%4d", sun_value);
+	//gfx_mono_draw_filled_rect(25, 0, 24, 8, GFX_PIXEL_CLR);
 	gfx_mono_draw_string(sun_val_string, 25, 0, &sysfont);
 }
 
@@ -105,9 +108,11 @@ uint8_t zombie_position = 122; //in x
 
 static void zombie_walk()
 {
+	//if(gpio_pin_is_low(GPIO_PUSH_BUTTON_0)){
 	gfx_mono_draw_filled_rect(zombie_position+5, 8, 1, 8, GFX_PIXEL_CLR);
 	zombie_position--;
 	gfx_mono_draw_string("@", zombie_position, 8, &sysfont);
+	//}
 }
 
 uint8_t cursor_position = 8; //in y
@@ -164,6 +169,8 @@ static void cursor_select()
 		sun_value -= 10;
 		uint8_t temp_p = plant_index; 
 		check_plant[temp_p] = true;
+		
+		//if(check_plant[temp_p]){gfx_mono_draw_string("POK", 70, 24, &sysfont);}
 	}
 	
 	/*below part of code only for checking not use in final form of code*/
@@ -187,6 +194,8 @@ static void cursor_select()
 	*/
 }
 
+bool end_game = true;
+
 int main (void)
 {
 	board_init();
@@ -200,6 +209,10 @@ int main (void)
 	gfx_mono_init();
 	
 	start_game();
+	
+	//if(!start_state){
+		//tc_disable(&TCE0);
+	//}
 	
 	tc_enable(&TCC0);
 	tc_set_overflow_interrupt_callback(&TCC0, sun_count);
@@ -228,6 +241,8 @@ int main (void)
 	tc_write_clock_source(&TCE1, TC_CLKSEL_DIV64_gc);
 	
 	while(1){
-		
+		if(end_game){
+			cpu_irq_disable();
+		}
 	}
 }
