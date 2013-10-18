@@ -62,6 +62,7 @@ void randomPeta(void);
 void start_game(void);
 void led_start(void);
 void sunBurst(void);
+void button_press(void);
 
 int main (void)
 {
@@ -86,6 +87,13 @@ int main (void)
 			tc_set_overflow_interrupt_level(&TCC0, TC_INT_LVL_LO);
 			tc_write_clock_source(&TCC0, TC_CLKSEL_DIV256_gc);
 			
+			tc_enable(&TCC1);
+			tc_set_overflow_interrupt_callback(&TCC1, button_press);
+			tc_set_wgm(&TCC1, TC_WG_NORMAL);
+			tc_write_period(&TCC1, 62500);
+			tc_set_overflow_interrupt_level(&TCC1, TC_INT_LVL_LO);
+			tc_write_clock_source(&TCC1, TC_CLKSEL_DIV8_gc);
+			
 			gfx_mono_draw_string("SUN:   0", 0, 0, &sysfont);
 			gfx_mono_draw_string(">", 0, cursor_position, &sysfont);
 			gfx_mono_draw_string("Score:  0", 63, 0, &sysfont);
@@ -97,14 +105,14 @@ int main (void)
 			
 			for(j = 0; j <= 70; j++){
 				
-				if(sun_value > 5){
+				if(sun_value > 10){
 					
 					lightsensor_measure();
 					while (!lightsensor_data_is_ready()) {
 						// Wait until the conversion is complete
 					}
 					if(lightsensor_get_raw_value() > 250){
-						sun_value -= 5;
+						sun_value -= 10;
 						sunBurst();
 						gfx_mono_draw_filled_rect(12,8,114,24,GFX_PIXEL_CLR);
 					}
@@ -125,67 +133,7 @@ int main (void)
 					break;
 				}
 				
-				if(gpio_pin_is_low(GPIO_PUSH_BUTTON_1)){
-					gfx_mono_draw_filled_rect(0,cursor_position,5,8,GFX_PIXEL_CLR);
-					if(cursor_position==8) cursor_position = 24;
-					else cursor_position-=8;
-					gfx_mono_draw_char('>', 0, cursor_position, &sysfont);
-				}
-				if(gpio_pin_is_low(GPIO_PUSH_BUTTON_2)){
-					gfx_mono_draw_filled_rect(0,cursor_position,5,8,GFX_PIXEL_CLR);
-					if(cursor_position==24) cursor_position = 8;
-					else cursor_position+=8;
-					gfx_mono_draw_char('>', 0, cursor_position, &sysfont);
-				}
-				if(gpio_pin_is_low(GPIO_PUSH_BUTTON_0)){
-					if(cursor_position==8){
-						if(plant[0]==false){
-							if(sun_value>=plant_cost){
-								sun_value -= plant_cost;
-								plant[0] = true;
-								gfx_mono_draw_char('P',6,cursor_position,&sysfont);
-							}
-						}
-						else{
-							if(sun_value>=2){
-								sun_value -= 2;
-								tembak_atas[0]='*';
-							}
-							
-						}
-						
-						}else if(cursor_position==16){
-						if(plant[1]==false){
-							if(sun_value>=plant_cost){
-								sun_value -= plant_cost;
-								plant[1] = true;
-								gfx_mono_draw_char('P',6,cursor_position,&sysfont);
-							}
-						}
-						else{
-							if(sun_value>=2){
-								sun_value -= 2;
-								tembak_tengah[0]='*';
-							}
-							
-						}
-						
-						}else{
-						if(plant[2]==false){
-							if(sun_value>=plant_cost){
-								sun_value -= plant_cost;
-								plant[2] = true;
-								gfx_mono_draw_char('P',6,cursor_position,&sysfont);
-							}
-						}
-						else{
-							if(sun_value>=2){
-								sun_value -= 2;
-								tembak_bawah[0]='*';
-							}
-						}
-					}
-				}
+				
 				tampilkanPeta();
 				tampilkanTembak();
 				delay_ms(1000);
@@ -211,6 +159,70 @@ int main (void)
 		}
 	}
 	
+}
+
+void button_press(void){
+	if(gpio_pin_is_low(GPIO_PUSH_BUTTON_1)){
+		gfx_mono_draw_filled_rect(0,cursor_position,5,8,GFX_PIXEL_CLR);
+		if(cursor_position==8) cursor_position = 24;
+		else cursor_position-=8;
+		gfx_mono_draw_char('>', 0, cursor_position, &sysfont);
+	}
+	if(gpio_pin_is_low(GPIO_PUSH_BUTTON_2)){
+		gfx_mono_draw_filled_rect(0,cursor_position,5,8,GFX_PIXEL_CLR);
+		if(cursor_position==24) cursor_position = 8;
+		else cursor_position+=8;
+		gfx_mono_draw_char('>', 0, cursor_position, &sysfont);
+	}
+	if(gpio_pin_is_low(GPIO_PUSH_BUTTON_0)){
+		if(cursor_position==8){
+			if(plant[0]==false){
+				if(sun_value>=plant_cost){
+					sun_value -= plant_cost;
+					plant[0] = true;
+					gfx_mono_draw_char('P',6,cursor_position,&sysfont);
+				}
+			}
+			else{
+				if(sun_value>=2){
+					sun_value -= 2;
+					tembak_atas[0]='*';
+				}
+				
+			}
+			
+			}else if(cursor_position==16){
+			if(plant[1]==false){
+				if(sun_value>=plant_cost){
+					sun_value -= plant_cost;
+					plant[1] = true;
+					gfx_mono_draw_char('P',6,cursor_position,&sysfont);
+				}
+			}
+			else{
+				if(sun_value>=2){
+					sun_value -= 2;
+					tembak_tengah[0]='*';
+				}
+				
+			}
+			
+			}else{
+			if(plant[2]==false){
+				if(sun_value>=plant_cost){
+					sun_value -= plant_cost;
+					plant[2] = true;
+					gfx_mono_draw_char('P',6,cursor_position,&sysfont);
+				}
+			}
+			else{
+				if(sun_value>=2){
+					sun_value -= 2;
+					tembak_bawah[0]='*';
+				}
+			}
+		}
+	}
 }
 
 void sunBurst(void){
