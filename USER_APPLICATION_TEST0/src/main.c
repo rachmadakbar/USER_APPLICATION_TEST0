@@ -92,9 +92,9 @@ uint8_t zombie_position = 122; //in x
 static void zombie_walk()
 {
 	//if(gpio_pin_is_low(GPIO_PUSH_BUTTON_0)){
-	//gfx_mono_draw_filled_rect(zombie_position+5, 8, 1, 8, GFX_PIXEL_CLR);
-	//zombie_position--;
-	//gfx_mono_draw_string("@", zombie_position, 8, &sysfont);
+	gfx_mono_draw_filled_rect(zombie_position+5, 8, 1, 8, GFX_PIXEL_CLR);
+	zombie_position--;
+	gfx_mono_draw_string("@", zombie_position, 8, &sysfont);
 	//}
 }
 
