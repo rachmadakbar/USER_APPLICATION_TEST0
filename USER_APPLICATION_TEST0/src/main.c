@@ -30,6 +30,65 @@
 #include <asf.h>
 #include <util/delay.h>
 #include <stdio.h>
+#include <string.h>
+
+static void led_start()
+{
+	
+	LED_On(LED0);
+	_delay_ms(250);
+	LED_Off(LED0);
+	LED_On(LED1);
+	_delay_ms(250);
+	LED_Off(LED1);
+	LED_On(LED2);
+	_delay_ms(250);
+	LED_Off(LED2);
+	LED_On(LED3);
+	_delay_ms(250);
+	LED_Off(LED3);
+	
+	for(int t = 0; t < 2; t++){
+		LED_On(LED0);
+		LED_On(LED2);
+		_delay_ms(250);
+		LED_On(LED1);
+		LED_On(LED3);
+		LED_Off(LED0);
+		LED_Off(LED2);
+		_delay_ms(250);
+		LED_Off(LED1);
+		LED_Off(LED3);
+	}
+}
+
+
+static void start_game()
+{
+	char* string1 = "Plant Shooter";
+	char* string2 = "ESAT vs Zombies";
+	uint8_t string_length = 0;
+
+	gfx_mono_draw_string(string1, (128-strlen(string1)*6)/2, 12, &sysfont);
+	string_length = strlen(string1)*6;
+
+	led_start();
+
+	gfx_mono_draw_filled_rect((128-string_length)/2, 12, string_length, 8, GFX_PIXEL_CLR);
+	gfx_mono_draw_string(string2, (128-strlen(string2)*6)/2, 12, &sysfont);
+	string_length = strlen(string2)*6;
+
+	led_start();
+
+	gfx_mono_draw_filled_rect((128-string_length)/2, 12, string_length, 8, GFX_PIXEL_CLR);
+	gfx_mono_draw_string(string1, (128-strlen(string1)*6)/2, 7, &sysfont);
+	gfx_mono_draw_string(string2, (128-strlen(string2)*6)/2, 18, &sysfont);
+	
+	led_start();
+	
+	gfx_mono_draw_filled_rect(0, 0, 128, 32, GFX_PIXEL_CLR);
+	
+}
 
 uint16_t sun_value = 0;
 
@@ -39,7 +98,6 @@ static void sun_count()
 	
 	char* sun_val_string = NULL;
 	sprintf(sun_val_string, "%4d", sun_value);
-	//gfx_mono_draw_filled_rect(25, 0, 24, 8, GFX_PIXEL_CLR);
 	gfx_mono_draw_string(sun_val_string, 25, 0, &sysfont);
 }
 
@@ -47,11 +105,9 @@ uint8_t zombie_position = 122; //in x
 
 static void zombie_walk()
 {
-	//if(gpio_pin_is_low(GPIO_PUSH_BUTTON_0)){
 	gfx_mono_draw_filled_rect(zombie_position+5, 8, 1, 8, GFX_PIXEL_CLR);
 	zombie_position--;
 	gfx_mono_draw_string("@", zombie_position, 8, &sysfont);
-	//}
 }
 
 uint8_t cursor_position = 8; //in y
@@ -108,8 +164,6 @@ static void cursor_select()
 		sun_value -= 10;
 		uint8_t temp_p = plant_index; 
 		check_plant[temp_p] = true;
-		
-		//if(check_plant[temp_p]){gfx_mono_draw_string("POK", 70, 24, &sysfont);}
 	}
 	
 	/*below part of code only for checking not use in final form of code*/
@@ -139,6 +193,14 @@ int main (void)
 	sysclk_init();
 	pmic_init();
 	
+	cpu_irq_enable();
+	
+	LED_Off(LED3);
+	gpio_set_pin_high(NHD_C12832A1Z_BACKLIGHT);
+	gfx_mono_init();
+	
+	start_game();
+	
 	tc_enable(&TCC0);
 	tc_set_overflow_interrupt_callback(&TCC0, sun_count);
 	tc_set_wgm(&TCC0, TC_WG_NORMAL);
@@ -146,13 +208,8 @@ int main (void)
 	tc_set_overflow_interrupt_level(&TCC0, TC_INT_LVL_LO);
 	tc_write_clock_source(&TCC0, TC_CLKSEL_DIV256_gc);
 	
-	cpu_irq_enable();
-	
-	gfx_mono_init();
 	gfx_mono_draw_string("SUN:   0", 0, 0, &sysfont);
 	gfx_mono_draw_string(">", 0, cursor_position, &sysfont);
-	
-	gpio_set_pin_high(NHD_C12832A1Z_BACKLIGHT);
 	
 	tc_enable(&TCC1);
 	tc_set_overflow_interrupt_callback(&TCC1, cursor_select);
