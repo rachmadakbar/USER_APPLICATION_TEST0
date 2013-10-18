@@ -30,6 +30,10 @@
 #include <stdio.h>
 #include <avr/eeprom.h>
 #include <string.h>
+#include <asf.h>
+#include "adc_sensors.h"
+#include "sysfont.h"
+#include "util/delay.h"
 
 uint16_t sun_value = 0;
 uint16_t score = 0;
@@ -57,6 +61,7 @@ void sun_count(void);
 void randomPeta(void);
 void start_game(void);
 void led_start(void);
+void sunBurst(void);
 
 int main (void)
 {
@@ -64,7 +69,7 @@ int main (void)
 	board_init();
 	pmic_init();
 	gfx_mono_init();
-	//adc_sensors_init();
+	adc_sensors_init();
 	// Enable display backlight
 	gpio_set_pin_high(NHD_C12832A1Z_BACKLIGHT);
 	cpu_irq_enable();
@@ -73,7 +78,7 @@ int main (void)
 		
 		if(state==1){
 			start_game();
-		}else if(state==2){
+			}else if(state==2){
 			tc_enable(&TCC0);
 			tc_set_overflow_interrupt_callback(&TCC0, sun_count);
 			tc_set_wgm(&TCC0, TC_WG_NORMAL);
@@ -86,9 +91,26 @@ int main (void)
 			gfx_mono_draw_string("Score:  0", 63, 0, &sysfont);
 			
 			randomPeta();
+			
 			char* score_string = NULL;
 			uint16_t old_score = 0;
+			
 			for(j = 0; j <= 70; j++){
+				
+				if(sun_value > 5){
+					
+					lightsensor_measure();
+					while (!lightsensor_data_is_ready()) {
+						// Wait until the conversion is complete
+					}
+					if(lightsensor_get_raw_value() > 250){
+						sun_value -= 5;
+						sunBurst();
+						gfx_mono_draw_filled_rect(12,8,114,24,GFX_PIXEL_CLR);
+					}
+				}
+				
+
 				if(score > old_score){
 					sprintf(score_string, "%3d", score);
 					gfx_mono_draw_string(score_string, 100, 0, &sysfont);
@@ -98,7 +120,7 @@ int main (void)
 				if(lose){
 					state=3;
 					break;
-				}else if(zombie==0){
+					}else if(zombie==0){
 					state=4;
 					break;
 				}
@@ -168,14 +190,14 @@ int main (void)
 				tampilkanTembak();
 				delay_ms(1000);
 			}
-		}else if(state==3){
+			}else if(state==3){
 			cpu_irq_disable();
 			gfx_mono_draw_filled_rect(0,0,128,32,GFX_PIXEL_CLR);
 			while(true){
 				gfx_mono_draw_string("GAME OVER",36,8,&sysfont)	;
 				gfx_mono_draw_string("You Lose",39,20,&sysfont)	;
 			}
-		}else if(state==4){
+			}else if(state==4){
 			cpu_irq_disable();
 			gfx_mono_draw_filled_rect(0,0,128,32,GFX_PIXEL_CLR);
 			while(true){
@@ -189,6 +211,29 @@ int main (void)
 		}
 	}
 	
+}
+
+void sunBurst(void){
+	for(i=0;i<19;++i){
+		tembak_atas[i] = ' ';
+		tembak_tengah[i] = ' ';
+		tembak_bawah[i] = ' ';
+	}
+	for(i=0;i<20;++i){
+		if(atas[i+j]=='@'){
+			atas[i+j] = ' ';
+			zombie--;
+			score += 2;
+			}else if(tengah[i+j]=='@'){
+			tengah[i+j] = ' ';
+			zombie--;
+			score += 2;
+			}else if(bawah[i+j]=='@'){
+			bawah[i+j] = ' ';
+			zombie--;
+			score += 2;
+		}
+	}
 }
 
 void tampilkanPeta(void){
@@ -411,3 +456,5 @@ void start_game(void)
 	
 	state = 2;
 }
+
+
