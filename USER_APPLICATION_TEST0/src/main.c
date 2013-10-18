@@ -117,7 +117,7 @@ static void cursor_select()
 		gfx_mono_draw_string(buffer_check, 70, (c+1)*8, &sysfont);
 	}
 	//bool shooting = gpio_pin_is_high(QTOUCH_BUTTON_SNSK);
-
+/*
 	if(planting && check_plant[cursor_position]){
 		gfx_mono_draw_string("OK", 115, 24, &sysfont);
 
@@ -128,6 +128,7 @@ static void cursor_select()
 		tc_set_overflow_interrupt_level(&TCE0, TC_INT_LVL_LO);
 		tc_write_clock_source(&TCE0, TC_CLKSEL_DIV64_gc);
 	}
+	*/
 }
 
 int main (void)
@@ -163,7 +164,7 @@ int main (void)
 	tc_enable(&TCE1);
 	tc_set_overflow_interrupt_callback(&TCE1, zombie_walk);
 	tc_set_wgm(&TCE1, TC_WG_NORMAL);
-	tc_write_period(&TCE1, 15625);
+	tc_write_period(&TCE1, 31250);
 	tc_set_overflow_interrupt_level(&TCE1, TC_INT_LVL_LO);
 	tc_write_clock_source(&TCE1, TC_CLKSEL_DIV64_gc);
 	
